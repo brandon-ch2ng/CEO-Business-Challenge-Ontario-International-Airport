@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Airport Shuttles | Ontario Airport</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="/" aria-label="Ontario International Airport">
+        <img src="{{ url_for('static', filename='ont-new-logo.png') }}" alt="Ontario International Airport">
+      </a>
+      <nav class="toplinks" aria-label="Top links">
+        <a href="/shuttle" class="link lock active">Airport Shuttles</a>
+        <a href="/manage" class="link">Manage my booking</a>
+        <a href="/login" class="link lock">Login/Register</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Shuttle Image Section -->
+  <section class="shuttle-section">
+    <img src="{{ url_for('static', filename='shuttle-map.png') }}" 
+         alt="Ontario Airport Shuttle" 
+         class="shuttle-image">
+  </section>
+
+  <!-- Shuttle Info Box -->
+  <section class="shuttle-info">
+    <div class="info-box">
+      <p>The shuttles run every <strong>5–20 minutes</strong>, with shuttles departing less frequently between <strong>12:30 am and 3 am</strong>.</p>
+
+      <p>At <strong>Terminals 2 & 4</strong>, shuttle pick up and drop off are stationed at the <strong>Terminal islands</strong> (located between the parking lots and the terminal buildings).</p>
+
+      <p>At the <strong>Rental Car Facility</strong>, shuttle pick up and drop off are located in front of the building.</p>
+
+      <p>Airport shuttle requests for pick-ups or drop-offs at the <strong>International Arrivals terminal</strong> or <strong>USO</strong> can be requested via an in-shuttle stop request or via phone (contact information below).</p>
+
+      <hr>
+
+      <p><strong>Hours:</strong> 24 hours/day<br>
+      <strong>Phone:</strong> (909) 937-1240<br>
+      <strong>Email:</strong> <a href="mailto:customerservice@pciont.co">customerservice@pciont.co</a></p>
+    </div>
+  </section>
+</body>
+</html>

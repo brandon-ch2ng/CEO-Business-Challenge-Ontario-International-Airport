@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Ontario Airport Parking</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <!-- left: logo -->
+      <a class="brand" href="/" aria-label="Ontario International Airport">
+        <img src="{{ url_for('static', filename='ont-new-logo.png') }}" alt="Ontario International Airport">
+      </a>
+
+      <!-- right: links -->
+      <nav class="toplinks" aria-label="Top links">
+        <a href="/shuttle" class="link lock">Airport Shuttles</a>
+        <a href="/manage" class="link">Manage my booking</a>
+        <a href="/login" class="link lock">Login/Register</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Reserve Parking Online</h1>
+      <p>Book up to 2 hours in advance and secure a parking space before you even leave home.</p>
+      <a href="https://booking.flyontario.com/en/" target="_blank" rel="noopener" class="hero-btn">
+        RESERVE NOW
+      </a>
+    </div>
+  </section>
+
+  <!-- Parking Info Section -->
+  <section id="parking-section" class="parking-section">
+    <h1>Parking Availability</h1>
+
+    {% for lot in lots %}
+      {% set fill_class = 'fill-high' if lot.percent_full >= 90 else ('fill-med' if lot.percent_full >= 75 else 'fill-low') %}
+      <div class="lot-row">
+        <!-- LEFT: title, bar, badge -->
+        <div class="lot-left">
+          <h3 class="lot-title">{{ lot.name }}</h3>
+
+          <div class="bar-track" role="meter" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ lot.percent_full }}">
+            <div class="bar-fill {{ fill_class }}" style="width: {{ lot.percent_full }}%"></div>
+            <span class="bar-label">{{ lot.percent_full }}% FULL</span>
+          </div>
+
+          <div class="avail-badge">
+            <strong>{{ lot.available }}</strong> of <strong>{{ lot.total }}</strong> available
+          </div>
+        </div>
+
+        <!-- RIGHT: actions -->
+        <div class="lot-actions">
+            {% if lot.percent_full >= 90 %}
+              <button class="btn btn-disabled" disabled>LOT FULL</button>
+            {% else %}
+              <a href="{{ lot.reserve_url }}" target="_blank" rel="noopener" class="btn btn-primary">RESERVE NOW</a>
+            {% endif %}
+          <button class="btn btn-ghost chevron" onclick="toggleDetails(this)">Rates and Details</button>
+        </div>
+
+        <!-- DETAILS (row-wide) -->
+        <div class="lot-details">
+          <div class="details">
+            <div class="lot-details-box">
+              {% if lot.address %}
+              <section class="detail-section">
+                <h4>Parking address</h4>
+                <p>
+                  {{ lot.address }}
+                  {% if lot.map_url %}
+                    · <a class="details-link" href="{{ lot.map_url }}" target="_blank" rel="noopener">View on map</a>
+                  {% endif %}
+                </p>
+              </section>
+              {% endif %}
+
+              {% if lot.pricing %}
+              <section class="detail-section">
+                <h4>Pricing</h4>
+                <table class="pricing-table">
+                  <thead>
+                    <tr><th>Rate</th><th>Price</th></tr>
+                  </thead>
+                  <tbody>
+                    {% for item in lot.pricing %}
+                    <tr><td>{{ item.label }}</td><td>{{ item.price }}</td></tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </section>
+              {% endif %}
+
+              {% if lot.about %}
+              <section class="detail-section">
+                <h4>About this lot</h4>
+                <p>{{ lot.about }}</p>
+              </section>
+              {% endif %}
+
+              {% if lot.features %}
+              <section class="detail-section">
+                <h4>What to know</h4>
+                <ul class="features">
+                  {% for f in lot.features %}
+                  <li>{{ f }}</li>
+                  {% endfor %}
+                </ul>
+              </section>
+              {% endif %}
+
+              {% if lot.image_url %}
+              <figure class="details-photo">
+                <img src="{{ lot.image_url }}" alt="Photo of {{ lot.name }}" loading="lazy" decoding="async">
+                <figcaption>{{ lot.name }}</figcaption>
+              </figure>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </section>
+
+  <!-- Toggle Script -->
+  <script>
+    function toggleDetails(button) {
+      const details = button.parentElement.nextElementSibling;
+      const expanded = details.style.display === "block";
+      details.style.display = expanded ? "none" : "block";
+      button.innerText = expanded ? "Rates and Details" : "Hide Details";
+    }
+  </script>
+
+  <script>
+    function toggleDetails(button) {
+      const row = button.closest('.lot-row');
+      const detailsWrap = row.querySelector('.lot-details .details');
+      const isOpen = detailsWrap.classList.contains('open');
+      detailsWrap.classList.toggle('open', !isOpen);
+      button.innerText = isOpen ? "Rates and Details" : "Hide Details";
+      button.setAttribute('aria-expanded', String(!isOpen));
+    }
+  
+    // Ensure all start closed
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.lot-details .details').forEach(d => {
+        d.classList.remove('open');
+        // also wipe any leftover inline display from older code
+        d.style.removeProperty('display');
+      });
+      document.querySelectorAll('.btn.chevron').forEach(btn => {
+        btn.setAttribute('aria-expanded', 'false');
+      });
+    });
+  </script>
+</body>
+</html>
